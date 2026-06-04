@@ -1,8 +1,7 @@
 // Powfu 拍摄看板 — iOS Scriptable 桌面小组件
 // 安装方式：iPhone 下载 Scriptable → 新建脚本 → 粘贴此代码 → 桌面添加小组件
 
-const TASKS_URL = "https://raw.githubusercontent.com/wei0000fei/claude-memory/master/tasks.json";
-const LOCAL_URL = "http://192.168.31.180:8765/tasks.json";
+const TASKS_URL = "https://wei0000fei.github.io/powfu-kanban/tasks.json";
 
 const STATUS_EMOJI = {
   "planning": "🟡", "scripting": "📝", "shooting": "🎬",
