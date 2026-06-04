@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Powfu看板">
+<meta name="theme-color" content="#0f0f0f">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='120' height='120' rx='24' fill='%230f0f0f'/><text x='60' y='78' text-anchor='middle' font-size='54' fill='%23f59e0b'>P</text></svg>">
+<title>Powfu 拍摄看板</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: 20px; }
+h1 { text-align: center; font-size: 1.5em; margin-bottom: 8px; }
+.subtitle { text-align: center; color: #888; font-size: 0.85em; margin-bottom: 24px; }
+.columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+.column { background: #1a1a1a; border-radius: 12px; padding: 16px; }
+.column h2 { font-size: 1em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+.column h2 .count { font-size: 0.75em; color: #888; font-weight: normal; margin-left: 4px; }
+.col-planning h2 { border-color: #f59e0b; color: #f59e0b; }
+.col-scripting h2 { border-color: #3b82f6; color: #3b82f6; }
+.col-shooting h2 { border-color: #8b5cf6; color: #8b5cf6; }
+.col-editing h2 { border-color: #ec4899; color: #ec4899; }
+.col-published h2 { border-color: #10b981; color: #10b981; }
+.card { background: #252525; border-radius: 8px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: transform .15s; }
+.card:hover { transform: translateY(-1px); }
+.card .title { font-size: 0.95em; font-weight: 600; margin-bottom: 6px; }
+.card .meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.75em; color: #999; }
+.card .meta span { background: #333; padding: 2px 8px; border-radius: 4px; }
+.card .notes { font-size: 0.8em; color: #777; margin-top: 8px; border-top: 1px solid #333; padding-top: 8px; }
+.priority-high { border-left: 3px solid #ef4444; }
+.priority-medium { border-left: 3px solid #f59e0b; }
+.priority-low { border-left: 3px solid #6b7280; }
+.empty { text-align: center; color: #555; padding: 24px; font-size: 0.85em; }
+.updated { text-align: center; color: #555; font-size: 0.7em; margin-top: 24px; }
+@media (max-width: 600px) { body { padding: 12px; } .columns { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Powfu 拍摄看板</h1>
+<p class="subtitle" id="taskCount"></p>
+
+<div class="columns" id="board"></div>
+<p class="updated" id="updateTime"></p>
+
+<script>
+const STATUSES = [
+    { key: 'planning', label: '选题', cls: 'col-planning' },
+    { key: 'scripting', label: '写稿', cls: 'col-scripting' },
+    { key: 'shooting', label: '拍摄', cls: 'col-shooting' },
+    { key: 'editing', label: '剪辑', cls: 'col-editing' },
+    { key: 'published', label: '已发布', cls: 'col-published' },
+];
+
+async function load() {
+    try {
+        const resp = await fetch('tasks.json');
+        const data = await resp.json();
+        render(data);
+    } catch (e) {
+        document.getElementById('board').innerHTML = '<p class="empty">无法加载任务列表。请确保 tasks.json 在同一目录。</p>';
+    }
+}
+
+function render(data) {
+    const board = document.getElementById('board');
+    board.innerHTML = '';
+
+    const tasks = data.tasks || [];
+    let totalCount = 0;
+
+    STATUSES.forEach(s => {
+        const col = document.createElement('div');
+        col.className = `column ${s.cls}`;
+
+        const items = tasks.filter(t => t.status === s.key);
+        totalCount += items.length;
+
+        col.innerHTML = `<h2>${s.label}<span class="count">${items.length}项</span></h2>`;
+
+        if (items.length === 0) {
+            col.innerHTML += '<div class="empty">暂无</div>';
+        } else {
+            items.forEach(t => {
+                const priorityCls = t.priority === 'high' ? 'priority-high' : t.priority === 'medium' ? 'priority-medium' : 'priority-low';
+                const card = document.createElement('div');
+                card.className = `card ${priorityCls}`;
+                card.innerHTML = `
+                    <div class="title">${esc(t.title)}</div>
+                    <div class="meta">
+                        <span>${esc(t.category || '未分类')}</span>
+                        ${t.deadline ? `<span>截止 ${t.deadline}</span>` : ''}
+                    </div>
+                    ${t.notes ? `<div class="notes">${esc(t.notes)}</div>` : ''}
+                `;
+                col.appendChild(card);
+            });
+        }
+        board.appendChild(col);
+    });
+
+    document.getElementById('taskCount').textContent = `共 ${totalCount} 个项目`;
+    document.getElementById('updateTime').textContent = `更新于 ${data.updated || '未知'}`;
+}
+
+function esc(s) { return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+load();
+</script>
+</body>
+</html>
