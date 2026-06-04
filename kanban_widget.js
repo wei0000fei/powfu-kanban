@@ -1,89 +1,49 @@
-// Powfu 拍摄看板 — iOS Scriptable 桌面小组件
-// 安装方式：iPhone 下载 Scriptable → 新建脚本 → 粘贴此代码 → 桌面添加小组件
+// Powfu 拍摄看板 — iOS Scriptable 小组件 v2
+const URL = "https://wei0000fei.github.io/powfu-kanban/tasks.json";
+const EMOJI = { "planning":"🟡", "scripting":"✍️", "shooting":"🎬", "editing":"🎞️", "published":"✅" };
 
-const TASKS_URL = "https://wei0000fei.github.io/powfu-kanban/tasks.json";
+let data;
+try { data = await new Request(URL).loadJSON(); } catch(e) { data={tasks:[],updated:"离线"}; }
+let tasks = (data.tasks||[]).filter(t => t.status !== "published");
 
-const STATUS_EMOJI = {
-  "planning": "🟡", "scripting": "📝", "shooting": "🎬",
-  "editing": "✂️", "published": "✅"
-};
-const PRIORITY_EMOJI = { "high": "🔥", "medium": "⭐", "low": "·" };
+let w = new ListWidget();
+w.backgroundColor = new Color("#0f0f0f");
+w.setPadding(16, 18, 14, 18);
 
-async function fetchTasks() {
-  let req = new Request(TASKS_URL);
-  req.timeoutInterval = 10;
-  try {
-    let data = await req.loadJSON();
-    return data;
-  } catch {
-    // Fallback to local
-    try {
-      let localReq = new Request(LOCAL_URL);
-      localReq.timeoutInterval = 5;
-      return await localReq.loadJSON();
-    } catch {
-      return { tasks: [], updated: "离线" };
-    }
-  }
-}
+// Title
+let t = w.addText("Powfu 拍摄看板");
+t.font = Font.boldSystemFont(15);
+t.textColor = new Color("#f5a623");
+w.addSpacer(10);
 
-async function createWidget() {
-  let data = await fetchTasks();
-  let tasks = data.tasks || [];
-
-  // Filter: show planning + scripting + shooting (not published)
-  let active = tasks.filter(t => t.status !== "published");
-
-  let widget = new ListWidget();
-  widget.backgroundColor = new Color("#0f0f0f");
-  widget.setPadding(14, 16, 14, 16);
-
-  // Header
-  let header = widget.addText("Powfu 拍摄看板");
-  header.font = Font.boldSystemFont(13);
-  header.textColor = new Color("#f59e0b");
-  widget.addSpacer(6);
-
-  if (active.length === 0) {
-    let empty = widget.addText("暂时没有待办项目 🎉");
-    empty.font = Font.systemFont(12);
-    empty.textColor = new Color("#555");
-  } else {
-    for (let t of active.slice(0, 5)) {
-      let row = widget.addStack();
-      row.layoutHorizontally();
-      row.spacing = 6;
-
-      let emoji = STATUS_EMOJI[t.status] || "·";
-      let priority = PRIORITY_EMOJI[t.priority] || "";
-      let title = t.title.length > 12 ? t.title.slice(0,11) + "…" : t.title;
-
-      let line = row.addText(`${emoji} ${title}`);
-      line.font = Font.systemFont(11);
-      line.textColor = new Color("#ddd");
-      line.lineLimit = 1;
-      row.addSpacer();
-
-      let ptext = row.addText(priority);
-      ptext.font = Font.systemFont(10);
-    }
-  }
-
-  widget.addSpacer(8);
-
-  // Footer
-  let footer = widget.addText(data.updated ? `↑ ${data.updated.slice(0,10)}` : "");
-  footer.font = Font.systemFont(8);
-  footer.textColor = new Color("#444");
-  footer.rightAlignText();
-
-  return widget;
-}
-
-let widget = await createWidget();
-if (config.runsInWidget) {
-  Script.setWidget(widget);
+// Tasks
+let n = Math.min(tasks.length, 5);
+if (n === 0) {
+  let e = w.addText("暂时没有待办 🎉");
+  e.font = Font.mediumSystemFont(12);
+  e.textColor = new Color("#555");
 } else {
-  widget.presentMedium();
+  for (let i=0; i<n; i++) {
+    let tk = tasks[i];
+    let s = EMOJI[tk.status]||"·";
+    let title = tk.title.length>14 ? tk.title.slice(0,13)+"…" : tk.title;
+    let p = tk.priority==="high"?"  🔥":"";
+    let line = w.addText(`${s}  ${title}${p}`);
+    line.font = Font.systemFont(12);
+    line.textColor = new Color("#ccc");
+    line.lineLimit = 1;
+    w.addSpacer(6);
+  }
 }
+
+w.addSpacer(4);
+
+// Footer
+let u = data.updated ? data.updated.slice(0,10) : "";
+let f = w.addText(`更新于 ${u}`);
+f.font = Font.systemFont(8);
+f.textColor = new Color("#666");
+f.rightAlignText();
+
+if (config.runsInWidget) { Script.setWidget(w); } else { w.presentMedium(); }
 Script.complete();
