@@ -1,56 +1,55 @@
-﻿{
-  "updated": "2026-06-05T10:04:00",
+{
+  "updated": "2026-06-05T10:30:00",
   "tasks": [
     {
       "id": 1,
-      "title": "Claude Code C鐩樻竻鐞?+ WorkBuddy瀵规瘮",
+      "title": "Claude Code C盘清理 + WorkBuddy对比",
       "status": "planning",
       "priority": "high",
-      "category": "鏁欑▼",
-      "notes": "閫夐宸插畾锛岃剼鏈凡瀹屾垚锛屽彔鐢?+ 鍙屾柟妗堝姣?+ 涓嶇敤閰嶇幆澧冧篃鑳界敤鐨刉orkBuddy",
+      "category": "教程",
+      "notes": "选题已定，脚本已完成，叠甲 + 双方案对比",
       "created": "2026-06-04",
       "deadline": null
     },
     {
       "id": 2,
-      "title": "娲嬭懕宸ュ巶 Tako Nano 鐙剼鏋舵祴璇?,
+      "title": "洋葱工厂 Tako Nano 独脚架测评",
       "status": "scripting",
       "priority": "high",
-      "category": "鏁扮爜璇勬祴",
-      "notes": "娑﹁壊鐗堝凡瀹屾垚锛屽緟鎷嶆憚銆傚叏鑳界増閰嶇疆锛岄噸鐐硅涓€閿崌闄?鑴氳笍瑙ｉ攣",
+      "category": "数码评测",
+      "notes": "润色版已完成，待拍摄。全能版配置，一键升降+脚踏解锁",
       "created": "2026-06-04",
       "deadline": null
     },
     {
       "id": 3,
-      "title": "B绔?18璐墿鍚堥泦",
+      "title": "B站618购物合集",
       "status": "published",
       "priority": "medium",
-      "category": "濂界墿鎺ㄨ崘",
-      "notes": "宸插彂甯冿紝缃《璇勮宸叉寕",
+      "category": "好物推荐",
+      "notes": "已发布，置顶评论已挂",
       "created": "2026-06-04",
       "deadline": "2026-06-18"
     },
     {
       "id": 4,
-      "title": "澶х溂姗欐姇褰?C3 Ultra 娴嬭瘎",
+      "title": "大眼橙投影 C3 Ultra 测评",
       "status": "planning",
       "priority": "high",
-      "category": "鏁扮爜璇勬祴",
-      "notes": "鍒氭帴鐨勶紝鎶曞奖浠祴璇?,
+      "category": "数码评测",
+      "notes": "刚接的，投影仪测评",
       "created": "2026-06-04",
       "deadline": null
     },
     {
       "id": 5,
-      "title": "鍏存垐 EG280 鑰虫満娴嬭瘎",
+      "title": "兴戈 EG280 耳机测评",
       "status": "planning",
       "priority": "high",
-      "category": "闊抽璇勬祴",
-      "notes": "鍟嗗崟锛屽垰鎺ョ殑銆傚叴鎴堟槸闊抽鍝佺墝锛孍G280 鏄€虫満/瑙ｇ爜鍣ㄧ被浜у搧锛岄潪鎶曞奖浠?,
+      "category": "音频评测",
+      "notes": "商单，刚接的。兴戈是音频品牌，EG280非投影仪",
       "created": "2026-06-05",
       "deadline": null
     }
   ]
 }
-
